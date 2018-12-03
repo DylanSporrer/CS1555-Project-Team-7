@@ -1,0 +1,7 @@
+Team 7 - Phase 2 Responsibility Division
+
+Dylan Sporrer: Menu and function design, JDBC connection, Query Design
+
+Jennifer Dudek: I/O Formatting, Testing, Query Design
+
+Alexander Washy: Trigger.sql Updates, Testing, Query Design
