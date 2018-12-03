@@ -31,7 +31,7 @@ CREATE OR REPLACE TRIGGER trig_closeAuctions
 FOR EACH ROW
 BEGIN
 	UPDATE Product
-	SET status = 'sold'
+	SET status = 'closed'
 	WHERE auction_id IN(
 		SELECT auction_id
 		FROM Product
@@ -137,9 +137,16 @@ IS
 	
 	--creates table with one attribute which lists categories included in input categories
 	CURSOR category_cursor IS
-		SELECT regexp_substr(allCategories,'[^,]+', 1, LEVEL) 
-		FROM dual
-		CONNECT BY regexp_substr(allCategories, '[^,]+', 1, LEVEL) IS NOT NULL;
+		SELECT *
+		FROM(
+			SELECT regexp_substr(allCategories,'[^,]+', 1, LEVEL) as catName
+			FROM dual
+			CONNECT BY regexp_substr(allCategories, '[^,]+', 1, LEVEL) IS NOT NULL
+		)
+		WHERE catName NOT IN(
+			SELECT parent_category
+			FROM Category
+		);
 BEGIN
 	--Makes max 0 instead of NULL if table empty
 	SELECT COALESCE(MAX(auction_id), 0)+1 
@@ -153,8 +160,8 @@ BEGIN
 	sellDate := currDate+(daysToSell);
 	
 	INSERT INTO Product VALUES(next_auction_id, prodName, prodDesc, seller, currDate, minPrice, daysToSell, 'under auction', NULL, sellDate, minPrice);
-	EXCEPTION WHEN OTHERS THEN
-		raise_application_error (-20002,'Exception Caught: Seller login must exist in customer table');
+	--EXCEPTION WHEN OTHERS THEN
+		--raise_application_error (-20002,'Exception Caught: Seller login must exist in customer table');
 	
 	--adds each (product, category) pair to BelongsTo table
 	OPEN category_cursor;
@@ -168,26 +175,20 @@ END;
 /
 
 --Procedure to get new bid ID and update tables
-CREATE OR REPLACE PROCEDURE proc_placeBid(amount IN int, prodName IN varchar2, bidder IN varchar2)
+CREATE OR REPLACE PROCEDURE proc_placeBid(amount IN int, prodID IN int, bidder IN varchar2)
 IS
 	nextBidSN int;
-	matching_auction_id int;
 	currDate DATE;
 BEGIN
 	SELECT COALESCE(MAX(bidsn), 0)+1
 	INTO nextBidSN
 	FROM BidLog; 
 	
-	SELECT auction_id
-	INTO matching_auction_id
-	FROM Product
-	WHERE name = prodName;
-	
 	SELECT c_date 
 	INTO currDate
 	FROM ourSysDATE;
 	
-	INSERT INTO BidLog VALUES(nextBidSN, matching_auction_id, bidder, currDate, amount); 
+	INSERT INTO BidLog VALUES(nextBidSN, prodID, bidder, currDate, amount); 
 END;
 /
 
@@ -202,4 +203,26 @@ BEGIN
 	INSERT INTO ourSysDATE VALUES(currDate);
 END;
 /
+
+CREATE OR REPLACE PROCEDURE proc_sellProduct(prodID IN int)
+IS
+	finalPrice int;
+BEGIN
+	SELECT max(amount) as sellPrice INTO finalPrice
+	FROM BidLog 
+	WHERE auction_id = prodID AND amount <> (
+		SELECT max(amount) 
+		FROM Bidlog 
+		WHERE auction_id = prodID
+	);
+	
+	UPDATE Product
+	SET status = 'sold', 
+		amount = finalPrice, 
+		sell_date = (SELECT c_date FROM ourSysDATE),
+		buyer = (SELECT bidder FROM BidLog WHERE auction_id = prodID AND amount = finalPrice)
+	WHERE auction_id = prodID AND status = 'under auction';
+END;
+/
+
 commit;
