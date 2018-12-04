@@ -1,7 +1,7 @@
 # CS1555-Project-Team-7
 CS1555 Term Project Repository for Dylan Sporrer (dos42), Jennifer Dudek (jed121) and Alexander Washy (anw91)
 
-Team 7 - Phase 2 ReadMe
+Team 7 - Phase 2 ReadMe File
 
 The MyAuction.java file contains the menu system and all SQL operations for phase 2. Before running the file, change the dbUser and dbPass string values
 found in the main method to your personal database lgin info. 
