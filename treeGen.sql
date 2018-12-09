@@ -1,0 +1,31 @@
+--Start clock
+CALL proc_startTime();
+--Populate Category Tree
+INSERT INTO Category VALUES('Vehicles', NULL);
+	INSERT INTO Category VALUES('Cars', 'Vehicles');
+		INSERT INTO Category VALUES('Cars: New', 'Cars');
+		INSERT INTO Category VALUES('Cars: Used', 'Cars');
+	INSERT INTO Category VALUES('Boats', 'Vehicles');
+	INSERT INTO Category VALUES('Motorcycles', 'Vehicles');
+INSERT INTO Category VALUES('Collectibles/Art', NULL);
+	INSERT INTO Category VALUES('Antiques', 'Collectibles/Art');
+		INSERT INTO Category VALUES('Exotic', 'Antiques');
+		INSERT INTO Category VALUES('Silver', 'Antiques');
+		INSERT INTO Category VALUES('Maritime', 'Antiques');
+		INSERT INTO Category VALUES('Period/Style', 'Antiques');
+	INSERT INTO Category VALUES('Coins', 'Collectibles/Art');
+		INSERT INTO Category VALUES('Commemorative Coins', 'Coins');
+		INSERT INTO Category VALUES('Historical Coins', 'Coins');
+	INSERT INTO Category VALUES('Art', 'Collectibles/Art');
+		INSERT INTO Category VALUES('Painting', 'Art');
+		INSERT INTO Category VALUES('Textile', 'Art');
+		INSERT INTO Category VALUES('Photography', 'Art');
+	INSERT INTO Category VALUES('Stamps', 'Collectibles/Art');
+	INSERT INTO Category VALUES('Memorabilia', 'Collectibles/Art');
+		INSERT INTO Category VALUES('Film/TV', 'Memorabilia');
+		INSERT INTO Category VALUES('Sports', 'Memorabilia');
+		INSERT INTO Category VALUES('Music', 'Memorabilia');
+	INSERT INTO Category VALUES('Crafts', 'Collectibles/Art');
+		INSERT INTO Category VALUES('Children', 'Crafts');
+		INSERT INTO Category VALUES('Outdoor', 'Crafts');
+commit;

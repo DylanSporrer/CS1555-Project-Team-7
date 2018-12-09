@@ -1,4 +1,4 @@
---Start
+--
 --Setup Triggers
 --
 
@@ -134,6 +134,8 @@ IS
 	currDate DATE;
 	sellDate DATE;
 	currCategory varchar2(20);
+	nextLeaf varchar2(20);
+	isALeaf int;
 	
 	--creates table with one attribute which lists categories included in input categories
 	CURSOR category_cursor IS
@@ -142,10 +144,18 @@ IS
 			SELECT regexp_substr(allCategories,'[^,]+', 1, LEVEL) as catName
 			FROM dual
 			CONNECT BY regexp_substr(allCategories, '[^,]+', 1, LEVEL) IS NOT NULL
-		)
-		WHERE catName NOT IN(
-			SELECT parent_category
-			FROM Category
+		);
+	
+	CURSOR leaf_cursor IS
+		SELECT name
+		FROM category 
+		WHERE name NOT IN(
+			SELECT name 
+			FROM category 
+			WHERE name IN(
+				SELECT parent_category 
+				FROM Category
+			)
 		);
 BEGIN
 	--Makes max 0 instead of NULL if table empty
@@ -168,7 +178,19 @@ BEGIN
 	LOOP
 		FETCH category_cursor INTO currCategory;
 	EXIT WHEN category_cursor%NOTFOUND;
-		INSERT INTO BelongsTo VALUES(next_auction_id, currCategory); 
+		isALeaf := 0;
+		OPEN leaf_cursor;
+		LOOP
+			FETCH leaf_cursor INTO nextLeaf;
+		EXIT WHEN leaf_cursor%NOTFOUND;
+			IF(currCategory = nextLeaf) THEN
+				isALeaf := 1;
+			END IF;
+		END LOOP;
+		CLOSE leaf_cursor;
+		IF(isALeaf = 1) THEN
+			INSERT INTO BelongsTo VALUES(next_auction_id, currCategory);
+		END IF;
 	END LOOP;
 	CLOSE category_cursor;
 END;
