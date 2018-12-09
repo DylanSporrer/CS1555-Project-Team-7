@@ -5,3 +5,11 @@ Dylan Sporrer: Menu and function design, JDBC connection, Query Design
 Jennifer Dudek: I/O Formatting, Testing, Query Design
 
 Alexander Washy: Trigger.sql Updates, Testing, Query Design
+
+Team 7 - Phase 3 Responsibility Division File
+
+Dylan Sporrer: Creation of Driver.java
+
+Jennifer Dudek: Creation of Benchmark.java
+
+Alexander Washy: Reformatting of MyAuction.java into function-seperated form
