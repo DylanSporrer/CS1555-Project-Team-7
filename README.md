@@ -1,10 +1,11 @@
 # CS1555-Project-Team-7
 CS1555 Term Project Repository for Dylan Sporrer (dos42), Jennifer Dudek (jed121) and Alexander Washy (anw91)
 
-Team 7 - Phase 2 ReadMe File
+Team 7 - Phase 2 & 3 ReadMe File
+treeGen.sql contains a category tree which Driver.java and Benchmark.java have been constructed around
+	- Please run this file after schema.sql and trigger.sql but before any java files
 
-The MyAuction.java file contains the menu system and all SQL operations for phase 2. Before running the file, change the dbUser and dbPass string values
-found in the main method to your personal database lgin info. 
+The MyAuction.java file contains the menu system and all SQL operations for phase 2. Before running the file, change the dbUser and dbPass string values found in the main method to your personal database lgin info. 
 
 Navigating the menu is done primarily through numbered lists, be sure to enter the number of the option not its name.
 
